@@ -8,9 +8,10 @@ import (
 	"path/filepath"
 	"flag"
 	"fmt"
-	"os"
+	//"os"
 
-	"github.com/tttmaximttt/go-chat-example/trace"
+	//"github.com/tttmaximttt/go-chat-example/trace"
+	chat "github.com/tttmaximttt/go-chat-example/chat"
 )
 
 type templateHandler struct {
@@ -30,13 +31,20 @@ func main() {
 	var addr = flag.String("addr", ":8080", "The addr of the  application.")
 	flag.Parse()
 
-	r := newRoom()
-	r.trace = trace.New(os.Stdout)
+	r := chat.NewRoom()
+	//r.trace = trace.New(os.Stdout)
 
-	http.Handle("/", &templateHandler{filename: "chat.html"})
+	http.Handle(
+		"/assets/",
+		http.StripPrefix("/assets", http.FileServer(http.Dir("./assets/"))),
+	)
+	http.Handle("/", chat.MustAuth(&templateHandler{filename: "chat.html"}))
+	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.Handle("/room", r)
+
+	http.HandleFunc("/auth/", chat.LoginHandler)
 	// get the room going
-	go r.run()
+	go chat.Run(r)
 	// start the web server
 	if err := http.ListenAndServe(*addr, nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
