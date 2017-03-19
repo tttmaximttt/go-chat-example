@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/google"
 	"github.com/tttmaximttt/go-chat-example/chat"
+	"github.com/stretchr/objx"
 )
 
 type templateHandler struct {
@@ -26,7 +27,16 @@ func (self *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	self.once.Do(func() {
 		self.templ = template.Must(template.ParseFiles(filepath.Join("view", self.filename)))
 	})
-	self.templ.Execute(w, r)
+
+	data := map[string]interface{}{
+		Host: r.Host,
+	}
+
+	if authCookie, err := r.Cookie("auth"); err == nil {
+		data["UserData"] = objx.MustFromBase64(authCookie.Value)
+	}
+
+	self.templ.Execute(w, data)
 }
 
 func main() {

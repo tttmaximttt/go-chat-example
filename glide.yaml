@@ -1,0 +1,8 @@
+package: github.com/tttmaximttt/go-chat-example
+import:
+- package: github.com/gorilla/websocket
+  version: ~1.1.0
+- package: github.com/stretchr/gomniauth
+  subpackages:
+  - providers/google
+- package: github.com/stretchr/objx

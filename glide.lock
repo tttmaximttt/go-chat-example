@@ -1,0 +1,43 @@
+hash: c7670c5cfa8c9637e1e58ec1d38eba781cedd041d45dfe12d659faca62bc9dfc
+updated: 2017-03-19T22:34:16.898764785+02:00
+imports:
+- name: github.com/clbanning/x2j
+  version: 5ee34bb343f10ecfc125261107681de62f985cf6
+- name: github.com/gorilla/websocket
+  version: 3ab3a8b8831546bd18fd182c20687ca853b2bb13
+- name: github.com/stretchr/codecs
+  version: 8e29b38960a541ed1264b001dcb21701283c590d
+  subpackages:
+  - bson
+  - constants
+  - csv
+  - json
+  - jsonp
+  - msgpack
+  - services
+  - xml
+- name: github.com/stretchr/gomniauth
+  version: d89fbe29242917607bee0a8f24279baa0203f975
+  subpackages:
+  - common
+  - oauth2
+  - providers/google
+- name: github.com/stretchr/objx
+  version: 1a9d0bb9f541897e62256577b352fdbc1fb4fd94
+- name: github.com/stretchr/signature
+  version: 168b2a1e1b562bf381d47471e31f5979a2a51cd5
+- name: github.com/stretchr/stew
+  version: 80ef0842b48b329a6120607c817a85aff5a2ec71
+  subpackages:
+  - strings
+- name: github.com/stretchr/tracer
+  version: 66d3696bba973e1697f7d68413b3f19c6d6e2a7c
+- name: github.com/ugorji/go
+  version: 708a42d246822952f38190a8d8c4e6b16a0e600c
+  subpackages:
+  - codec
+- name: labix.org/v2/mgo
+  version: "287"
+  subpackages:
+  - bson
+testImports: []

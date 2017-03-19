@@ -5,6 +5,8 @@ import (
 	"github.com/stretchr/gomniauth"
 	"net/http"
 	"strings"
+
+	"github.com/stretchr/objx"
 )
 
 type authHandler struct {
@@ -33,6 +35,43 @@ func MustAuth(handler http.Handler) http.Handler {
 	return &authHandler{next: handler}
 }
 
+func callbackActionHandler(providerStr string, queryMap map[string]interface{}) (string, error) {
+	provider, err := gomniauth.Provider(providerStr)
+	if err != nil {
+		return "", fmt.Errorf("Error when trying to get provider %s: %s", provider, err)
+	}
+
+	creds, err := provider.CompleteAuth(queryMap)
+	if err != nil {
+		return "", fmt.Errorf("Error when trying to complete auth for%s: %s", provider, err)
+	}
+
+	user, err := provider.GetUser(creds)
+	if err != nil {
+		return "", fmt.Errorf("Error when trying to get user from %s: %s", provider, err)
+	}
+
+	authCookieValue := objx.New(map[string]interface{}{
+		"name": user.Name(),
+	}).MustBase64()
+
+	return authCookieValue, nil
+}
+
+func loginActionHandler(providerStr string) (string, error) {
+	provider, err := gomniauth.Provider(providerStr)
+	if err != nil {
+		return "", fmt.Errorf("Error when trying to get provider %s: %s", provider, err)
+	}
+
+	loginUrl, err := provider.GetBeginAuthURL(nil, nil)
+	if err != nil {
+		return "", fmt.Errorf("Error when trying to GetBeginAuthURL for %s: %s", provider, err)
+	}
+
+	return loginUrl, nil
+}
+
 // loginHandler handles the third-party login process.
 // format: /auth/{action}/{provider}
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,27 +81,26 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := segs[3]
 	switch action {
 	case "login":
-		provider, err := gomniauth.Provider(provider)
+		loginUrl, err := loginActionHandler(provider)
 		if err != nil {
-			http.Error(
-				w,
-				fmt.Sprintf("Error when trying to get provider %s: %s", provider, err),
-				http.StatusBadRequest,
-			)
-			return
-		}
-
-		loginUrl, err := provider.GetBeginAuthURL(nil, nil)
-		if err != nil {
-			http.Error(
-				w,
-				fmt.Sprintf("Error when trying to GetBeginAuthURL for %s: %s", provider, err),
-				http.StatusBadRequest,
-			)
-			return
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
 		w.Header().Set("Location", loginUrl)
+		w.WriteHeader(http.StatusTemporaryRedirect)
+	case "callback":
+		queryMap := objx.MustFromURLQuery(r.URL.RawQuery)
+
+		authCookieValue, err := callbackActionHandler(provider, queryMap)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:  "auth",
+			Value: authCookieValue,
+			Path:  "/"})
+		w.Header().Set("Location", "/chat")
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	default:
 		w.WriteHeader(http.StatusNotFound)

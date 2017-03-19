@@ -1,6 +1,0 @@
-{
-    "dependencies": {
-        "github.com/gorilla/websocket": {},
-        "github.com/stretchr/gomniauth": {}
-    }
-}
