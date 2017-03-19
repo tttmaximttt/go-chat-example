@@ -1,23 +1,25 @@
 package main
 
 import (
-	"log"
-	"net/http"
-	"sync"
-	"html/template"
-	"path/filepath"
 	"flag"
 	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"path/filepath"
+	"sync"
 	//"os"
 
 	//"github.com/tttmaximttt/go-chat-example/trace"
-	chat "github.com/tttmaximttt/go-chat-example/chat"
+	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/tttmaximttt/go-chat-example/chat"
 )
 
 type templateHandler struct {
-	once sync.Once
+	once     sync.Once
 	filename string
-	templ *template.Template
+	templ    *template.Template
 }
 
 func (self *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +30,20 @@ func (self *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// setup gomniauth
+	gomniauth.SetSecurityKey("@ hello @ world @")
+	gomniauth.WithProviders(
+		//facebook.New("key", "secret",
+		//	"http://localhost:8080/auth/callback/facebook"),
+		//github.New("key", "secret",
+		//	"http://localhost:8080/auth/callback/github"),
+		google.New(
+			"825934878271-v1qvn7carrogetiqmh83nunrml3f15mo.apps.googleusercontent.com",
+			"vS1tGPSxXfCRWMCUz8ffKaBr",
+			"http://localhost:8080/auth/callback/google",
+		),
+	)
+
 	var addr = flag.String("addr", ":8080", "The addr of the  application.")
 	flag.Parse()
 
