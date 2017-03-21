@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"github.com/tttmaximttt/go-chat-example/trace"
 	"github.com/stretchr/objx"
+	"github.com/tttmaximttt/go-chat-example/trace"
 )
 
 const (
@@ -46,7 +46,7 @@ func (self *room) run() {
 			self.trace.Trace("Client leave room")
 		case msg := <-self.forward:
 			// forward message to all clients
-			self.trace.Trace("Message received: ", string(msg))
+			self.trace.Trace("Message received: ", msg)
 			for client := range self.clients {
 				client.send <- msg
 				self.trace.Trace(" -- sent to client")
@@ -79,9 +79,9 @@ func (self *room) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &client{
-		socket: socket,
-		send:   make(chan *message, messageBufferSize),
-		room:   self,
+		socket:   socket,
+		send:     make(chan *message, messageBufferSize),
+		room:     self,
 		userData: objx.MustFromBase64(authCookie.Value),
 	}
 
