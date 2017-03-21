@@ -8,13 +8,11 @@ import (
 	"net/http"
 	"path/filepath"
 	"sync"
-	//"os"
 
-	//"github.com/tttmaximttt/go-chat-example/trace"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/google"
-	"github.com/tttmaximttt/go-chat-example/chat"
 	"github.com/stretchr/objx"
+	"github.com/tttmaximttt/go-chat-example/chat"
 )
 
 type templateHandler struct {
@@ -29,7 +27,7 @@ func (self *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 
 	data := map[string]interface{}{
-		Host: r.Host,
+		"Host": r.Host,
 	}
 
 	if authCookie, err := r.Cookie("auth"); err == nil {
