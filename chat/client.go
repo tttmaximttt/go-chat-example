@@ -1,21 +1,22 @@
 package chat
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"time"
 )
 
 type client struct {
-	socket *websocket.Conn
-	send chan *message
-	room *room
+	socket   *websocket.Conn
+	send     chan *message
+	room     *room
 	userData map[string]interface{}
 }
 
 func (self *client) read() {
 	defer self.socket.Close()
 
-	for{
+	for {
 		var msg *message
 		err := self.socket.ReadJSON(&msg)
 
@@ -25,6 +26,11 @@ func (self *client) read() {
 
 		msg.When = time.Now()
 		msg.Name = self.userData["name"].(string)
+
+		if avatarURL, ok := self.userData["avatar"]; ok {
+			msg.AvatarURL = avatarURL.(string)
+		}
+
 		self.room.forward <- msg
 	}
 }

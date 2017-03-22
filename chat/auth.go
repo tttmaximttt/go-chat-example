@@ -51,8 +51,10 @@ func callbackActionHandler(providerStr string, queryMap map[string]interface{}) 
 		return "", fmt.Errorf("Error when trying to get user from %s: %s", provider, err)
 	}
 
+	fmt.Println(user.AvatarURL())
 	authCookieValue := objx.New(map[string]interface{}{
-		"name": user.Name(),
+		"name":   user.Name(),
+		"avatar": user.AvatarURL(),
 	}).MustBase64()
 
 	return authCookieValue, nil
