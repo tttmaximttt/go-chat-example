@@ -1,7 +1,6 @@
 package chat
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"time"
 )

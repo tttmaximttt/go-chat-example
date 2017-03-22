@@ -14,17 +14,11 @@ type authHandler struct {
 }
 
 func (auth *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("auth")
 
-	if err == http.ErrNoCookie {
+	if cookie, err := r.Cookie("auth"); err == http.ErrNoCookie || cookie.Value == "" {
 		// not authenticated
 		w.Header().Set("Location", "/login")
 		w.WriteHeader(http.StatusTemporaryRedirect)
-		return
-	}
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -51,7 +45,6 @@ func callbackActionHandler(providerStr string, queryMap map[string]interface{}) 
 		return "", fmt.Errorf("Error when trying to get user from %s: %s", provider, err)
 	}
 
-	fmt.Println(user.AvatarURL())
 	authCookieValue := objx.New(map[string]interface{}{
 		"name":   user.Name(),
 		"avatar": user.AvatarURL(),
@@ -78,9 +71,9 @@ func loginActionHandler(providerStr string) (string, error) {
 // format: /auth/{action}/{provider}
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	segs := strings.Split(r.URL.Path, "/")
-	fmt.Println(segs)
 	action := segs[2]
 	provider := segs[3]
+
 	switch action {
 	case "login":
 		loginUrl, err := loginActionHandler(provider)
