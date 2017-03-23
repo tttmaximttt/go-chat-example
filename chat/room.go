@@ -22,15 +22,17 @@ type room struct {
 	leave   chan *client
 	clients map[*client]bool
 	trace   trace.Tracer
+	avatar  Avatar
 }
 
-func newRoom() *room {
+func newRoom(avatar Avatar) *room {
 	return &room{
 		forward: make(chan *message),
 		join:    make(chan *client),
 		leave:   make(chan *client),
 		clients: make(map[*client]bool),
 		trace:   trace.Off(),
+		avatar:  avatar,
 	}
 }
 
@@ -61,8 +63,8 @@ func Run(self *room) {
 	self.run()
 }
 
-func NewRoom() *room {
-	return newRoom()
+func NewRoom(useAvatar GravatarAvatar) *room {
+	return newRoom(useAvatar)
 }
 
 func (self *room) ServeHTTP(w http.ResponseWriter, r *http.Request) {

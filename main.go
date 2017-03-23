@@ -55,7 +55,7 @@ func main() {
 	var addr = flag.String("addr", ":8080", "The addr of the  application.")
 	flag.Parse()
 
-	r := chat.NewRoom()
+	r := chat.NewRoom(chat.UseGravatar)
 	//r.trace = trace.New(os.Stdout)
 
 	http.Handle(

@@ -48,6 +48,7 @@ func callbackActionHandler(providerStr string, queryMap map[string]interface{}) 
 	authCookieValue := objx.New(map[string]interface{}{
 		"name":   user.Name(),
 		"avatar": user.AvatarURL(),
+		"email": user.Email(),
 	}).MustBase64()
 
 	return authCookieValue, nil
