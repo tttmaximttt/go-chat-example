@@ -1,0 +1,8 @@
+applications:
+- path: .
+  memory: 512MB
+  instances: 1
+  name: go-chat
+  disk_quota: 1024M
+  command: chatApp
+  buildpack: https://github.com/tttmaximttt/go-chat-example.git
