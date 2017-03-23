@@ -54,8 +54,7 @@ deploy:
    - internal/docker-push:
        username: $USERNAME
        password: $PASSWORD
-       cmd: /pipeline/source/go-chat-example
        port: "8080"
        tag: latest
        repository: tttmaximttt/go-chat-example
-       registry: https://registry.hub.docker.com
+       registry: https://hub.docker.com
