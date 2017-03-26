@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"strings"
 
+	"crypto/md5"
 	"github.com/stretchr/objx"
+	"io"
 )
 
 type authHandler struct {
@@ -30,6 +32,8 @@ func MustAuth(handler http.Handler) http.Handler {
 }
 
 func callbackActionHandler(providerStr string, queryMap map[string]interface{}) (string, error) {
+	m := md5.New()
+
 	provider, err := gomniauth.Provider(providerStr)
 	if err != nil {
 		return "", fmt.Errorf("Error when trying to get provider %s: %s", provider, err)
@@ -45,10 +49,14 @@ func callbackActionHandler(providerStr string, queryMap map[string]interface{}) 
 		return "", fmt.Errorf("Error when trying to get user from %s: %s", provider, err)
 	}
 
+	io.WriteString(m, strings.ToLower(user.Email()))
+	userId := fmt.Sprintf("%x", m.Sum(nil))
+
 	authCookieValue := objx.New(map[string]interface{}{
+		"userId": userId,
 		"name":   user.Name(),
 		"avatar": user.AvatarURL(),
-		"email": user.Email(),
+		"email":  user.Email(),
 	}).MustBase64()
 
 	return authCookieValue, nil
@@ -68,9 +76,9 @@ func loginActionHandler(providerStr string) (string, error) {
 	return loginUrl, nil
 }
 
-// loginHandler handles the third-party login process.
+// initialAuthHandler handles the third-party login process.
 // format: /auth/{action}/{provider}
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func initialAuthHandler(w http.ResponseWriter, r *http.Request) {
 	segs := strings.Split(r.URL.Path, "/")
 	action := segs[2]
 	provider := segs[3]
@@ -104,6 +112,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	loginHandler(w, r)
+func InitialAuthHandler(w http.ResponseWriter, r *http.Request) {
+	initialAuthHandler(w, r)
 }
