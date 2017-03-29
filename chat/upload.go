@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path"
-	"fmt"
 )
 
 func uploaderHandler(w http.ResponseWriter, req *http.Request) {
