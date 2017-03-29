@@ -36,7 +36,7 @@ build:
     - script:
         name: go build
         code: |
-          go build -o chatApp
+          CGO_ENABLED=0 GOOS=linux go build -a -o gochat
 
     # Test the project
     - script:
