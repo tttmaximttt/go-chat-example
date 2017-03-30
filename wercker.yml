@@ -37,7 +37,6 @@ build:
         name: go build
         code: |
           CGO_ENABLED=0 GOOS=linux go build -a -o gochat
-          docker build -t tttmaximttt/go-chat-example .
 
     # Test the project
     - script:

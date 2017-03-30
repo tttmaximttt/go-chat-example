@@ -63,7 +63,7 @@ func Run(self *room) {
 	self.run()
 }
 
-func NewRoom(useAvatar GravatarAvatar) *room {
+func NewRoom(useAvatar Avatar) *room {
 	return newRoom(useAvatar)
 }
 

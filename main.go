@@ -55,7 +55,7 @@ func main() {
 	var addr = flag.String("addr", ":8080", "The addr of the  application.")
 	flag.Parse()
 
-	r := chat.NewRoom(chat.UseGravatar)
+	r := chat.NewRoom(chat.UseFileSystemAvatar)
 	//r.trace = trace.New(os.Stdout)
 
 	http.Handle(
@@ -66,6 +66,7 @@ func main() {
 	http.Handle("/upload", &templateHandler{filename: "upload.html"})
 	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.Handle("/room", r)
+	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 	http.HandleFunc("/auth/", chat.InitialAuthHandler)
 	http.HandleFunc("/uploader", chat.UploaderHandler)
 
