@@ -2,9 +2,10 @@ package chat
 
 import (
 	"io/ioutil"
-	"os"
+	//"os"
 	"path/filepath"
 	"testing"
+	"os"
 )
 
 func TestAuthAvatar(t *testing.T) {
