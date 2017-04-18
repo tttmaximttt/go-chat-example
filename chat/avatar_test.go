@@ -39,7 +39,6 @@ func TestFileSystemAvatar(t *testing.T) {
 	client.userData = map[string]interface{}{"userId": "abc"}
 	url, err := fileSystemAvatar.GetAvatarURL(client)
 	if err != nil {
-		fmt.Println(">>>>>>", err)
 		t.Error("FileSystemAvatar.GetAvatarURL should not return an error")
 	}
 	if url != "/avatars/abc.jpg" {
